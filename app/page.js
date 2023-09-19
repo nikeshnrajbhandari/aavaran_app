@@ -14,28 +14,45 @@ async function fetchDataFromApi(props) {
       Authorization: 'Bearer ' + STRAPI_API_TOKEN,
     }
   }
+  const [data, setData] = useState(null)
+  const [isLoading, setLoading] = useState(true)
 
-  const res = await fetch(`${API_URL}/api/products?populate=*`, options, { cache: 'force-cache' })
+  useEffect(() => {
+    fetch(`${API_URL}/api/products?populate=*`, options, { cache: 'force-cache' })
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data)
+        setLoading(false)
+      })
+  }, [])
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
-  }
+  // const res = await fetch(`${API_URL}/api/products?populate=*`, options, { cache: 'force-cache' })
 
-  return res.json()
+  // if (!res.ok) {
+  //   // This will activate the closest `error.js` Error Boundary
+  //   throw new Error('Failed to fetch data')
+  // }
+
+  return data
 }
 
 export default function Page() {
-  useEffect(() => {
+  
+  const data = fetchDataFromApi()
+  console.log(data)
+/*
+  // useEffect(() => {
 
-    const getAll = async () => {
-      const profileData = await fetchDataFromApi();
-      console.log(profileData);
+  //   const getAll = async () => {
+  //     const profileData = await fetchDataFromApi()
+  //     ;
+  //     console.log(profileData);
 
-    };
+  //   };
 
-    const result = getAll(); // run it, run it
-  }, [result]);
+  //   const result = getAll(); // run it, run it
+  // }, []);
+  */
 
   return (
     <>
@@ -51,8 +68,9 @@ export default function Page() {
             px-5 md:px-0">
 
         </div>
+        <div><h1>{data.id}</h1></div>
       </Wrapper>
-      <div>{result}</div>
+      
     </>
   )
 }
